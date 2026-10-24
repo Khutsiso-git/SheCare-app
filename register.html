@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Register - SheCare</title>
+  <link rel="stylesheet" href="shecare.css">
+</head>
+<body class="register">
+
+  <h2>Create your SheCare_ Account</h2>
+
+  <form id="registerForm" class="register-form" onsubmit="registerSheCare(event)">
+    <input type="text" id="saCitizen" placeholder="Are you a South African Citizen? Yes/No" required>
+    <input type="text" id="saId" placeholder="Enter your South African ID (13 digits)" maxlength="13" required>
+    <input type="text" id="fullNames" placeholder="Enter your Full Names as shown on ID" required>
+    <input type="email" id="email" placeholder="Please enter your Email" required>
+    <input type="password" id="password" placeholder="Please enter your Password" required>
+    <input type="password" id="rePassword" placeholder="Re-type your Password" required>
+    <input type="text" id="address" placeholder="Enter your home address" required>
+    <input type="text" id="studyType" placeholder="Full-time or Part-time?" required>
+    <input type="text" id="disability" placeholder="Living with any disability? Yes/No" required>
+    <input type="text" id="city" placeholder="What is your preferred city?" required>
+    <button class="btn" type="submit">Register</button>
+  </form>
+
+  <br>
+  <a href="shecare.html" style="color: white; font-size: 18px; text-align: center; display:block; margin-top: 15px;">Back to Home</a>
+
+  <footer style="text-align: center; padding: 20px; color: black; font-size: 14px; margin-top: 50px;">
+    <p>Copyright © <span id="year"></span> SheCare_ All rights reserved.</p>
+  </footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD7-8wsiRZdO21N-Q1Ownlyt54hlSVX-ao",
+  authDomain: "javascript-f6b0d.firebaseapp.com",
+  projectId: "javascript-f6b0d",
+  storageBucket: "javascript-f6b0d.firebasestorage.app",
+  messagingSenderId: "986424458897",
+  appId: "1:986424458897:web:2c9a68fbf424bff4020930"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Year for footer
+document.getElementById('year').textContent = new Date().getFullYear();
+
+window.registerSheCare = async (e) => {
+  e.preventDefault();
+  const data = {
+    saCitizen: document.getElementById('saCitizen').value,
+    saId: document.getElementById('saId').value,
+    fullNames: document.getElementById('fullNames').value,
+    email: document.getElementById('email').value,
+    password: document.getElementById('password').value,
+    address: document.getElementById('address').value,
+    studyType: document.getElementById('studyType').value,
+    disability: document.getElementById('disability').value,
+    city: document.getElementById('city').value,
+    createdAt: serverTimestamp()
+  };
+  
+  if(data.saId.length !== 13){ alert("SA ID must be 13 digits"); return; }
+  if(document.getElementById('rePassword').value !== data.password){ alert("Passwords don't match"); return; }
+
+  try {
+    await addDoc(collection(db, "registrations"), data);
+    alert("✅ Registration Successful! Welcome to SheCare 💖");
+    window.location.href = "Login.html";
+  } catch(err){
+    alert("Error: " + err.message);
+  }
+};
+</script>
+
+</body>
+</html>

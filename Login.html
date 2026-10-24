@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login - SheCare</title>
+  <link rel="stylesheet" href="shecare.css">
+</head>
+<body class="register">
+
+  <h2>Login to SheCare_</h2>
+
+  <form id="loginForm" class="register-form" onsubmit="loginSheCare(event)">
+    <input type="email" id="loginEmail" placeholder="Enter your Email" required>
+    <input type="password" id="loginPassword" placeholder="Enter your Password" required>
+	<button class="btn" type="submit">Login</button>
+	<p style="margin-top:10px;"><a href="forgot-password.html" style="color: #ff6a00;">Forgot Password?</a></p>
+  </form>
+
+  <p style="text-align:center; margin-top:15px;">
+    <a href="register.html" style="color: #ff6a00;">Don't have an account? Register</a>
+  </p>
+
+  <a href="shecare.html" style="color: white; font-size: 16px; text-align: center; display:block; margin-top: 15px;">Back to Home</a>
+
+  <footer style="text-align: center; padding: 20px; color: black; font-size: 14px; margin-top: 50px;">
+    <p>Copyright © <span id="year"></span> SheCare_ All rights reserved.</p>
+  </footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD7-8wsiRZdO21N-Q1Ownlyt54hlSVX-ao",
+  authDomain: "javascript-f6b0d.firebaseapp.com",
+  projectId: "javascript-f6b0d",
+  storageBucket: "javascript-f6b0d.firebasestorage.app",
+  messagingSenderId: "986424458897",
+  appId: "1:986424458897:web:2c9a68fbf424bff4020930"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+document.getElementById('year').textContent = new Date().getFullYear();
+
+window.loginSheCare = async (e) => {
+  e.preventDefault();
+  
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value.trim();
+
+  try {
+    const q = query(collection(db, "registrations"), where("email", "==", email));
+    const snapshot = await getDocs(q);
+
+    if(snapshot.empty){
+      alert("❌ No account found with that email");
+      return;
+    }
+
+    let found = false;
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      if(data.password === password){
+        found = true;
+        // Save logged in user
+        localStorage.setItem('shecare_user', JSON.stringify(data));
+      }
+    });
+
+    if(found){
+      alert("✅ Login Successful! Welcome back 💖");
+      window.location.href = "dashboard.html";
+    } else {
+      alert("❌ Wrong password");
+    }
+
+  } catch(err){
+    alert("Error: " + err.message);
+  }
+};
+</script>
+
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SheCare - Check Distance</title>
+<link rel="stylesheet" href="shecare.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body class="map-page">
+
+<div class="search-box">
+  <input type="text" id="from" placeholder="From: e.g. Ebony Park">
+  <input type="text" id="to" placeholder="To: e.g. Fourways">
+  <button onclick="checkDistance()">Check Distance</button>
+</div>
+
+<div id="result"></div>
+<div id="map"></div>
+
+<script>
+const map = L.map('map').setView([-26.1, 28.05], 11);
+// This tile works with File:// and needs NO API KEY
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+  attribution: '© Esri, © OpenStreetMap'
+}).addTo(map);
+
+let routeLine;
+let markers = [];
+
+
+async function getCoords(place){
+  // Search whole South Africa, no Gauteng lock
+  const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&countrycodes=za&limit=1&q=${place}`);
+
+
+  const data = await res.json();
+  if(data.length === 0) throw new Error("Not found in SA: " + place);
+  return [parseFloat(data[0].lon), parseFloat(data[0].lat)];
+}
+
+async function checkDistance(){
+  const fromPlace = document.getElementById('from').value;
+  const toPlace = document.getElementById('to').value;
+  const resultDiv = document.getElementById('result');
+  if(!fromPlace || !toPlace){ alert("Enter both places"); return; }
+  resultDiv.style.display = "block"; resultDiv.innerText = "Calculating...";
+  try {
+    const fromCoords = await getCoords(fromPlace);
+    const toCoords = await getCoords(toPlace);
+    const routeRes = await fetch(`https://router.project-osrm.org/route/v1/driving/${fromCoords[0]},${fromCoords[1]};${toCoords[0]},${toCoords[1]}?overview=full&geometries=geojson`);
+    const routeData = await routeRes.json();
+    if(!routeData.routes || routeData.routes.length === 0) throw new Error("No driving route found");
+    const distanceKm = (routeData.routes[0].distance / 1000).toFixed(1);
+    const durationMin = (routeData.routes[0].duration / 60).toFixed(0);
+    
+    if(routeLine) map.removeLayer(routeLine);
+    markers.forEach(m => map.removeLayer(m));
+    markers = [];
+
+    routeLine = L.geoJSON(routeData.routes[0].geometry, { style: { color: '#FF6A00', weight: 6 } }).addTo(map);
+
+
+    const m1 = L.marker([fromCoords[1], fromCoords[0]]).addTo(map).bindPopup("From: " + fromPlace);
+    const m2 = L.marker([toCoords[1], toCoords[0]]).addTo(map).bindPopup("To: " + toPlace);
+    markers.push(m1,m2);
+    
+    resultDiv.innerText = `📍 ${fromPlace} → ${toPlace}: ${distanceKm} km (~${durationMin} mins)`;
+  } catch(err){ resultDiv.innerText = "Error: " + err.message; }
+}
+</script>
+</body>
+</html>

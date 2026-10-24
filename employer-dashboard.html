@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard - SheCare</title>
+  <link rel="stylesheet" href="shecare.css">
+  <style>
+    .dashboard-container { padding: 20px; max-width: 1000px; margin: auto; }
+    .nanny-card {
+      background: black;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      color: #ff6a00;
+    }
+    .nanny-card h3 { margin: 0 0 5px 0; color: white; }
+    .nanny-card p { margin: 3px 0; font-size: 14px; }
+    #loading { text-align: center; color: white; font-size: 18px; margin-top: 50px; }
+  </style>
+</head>
+<body class="register">
+
+  <h2 style="text-align:center; color:black;">SheCare_ Dashboard</h2>
+  <p style="text-align:center; color:black;" >All registered members</p>
+
+  <div class="dashboard-container">
+    <div id="loading">Loading registrations... 💖</div>
+    <div id="nannyList"></div>
+  </div>
+
+  <a href="shecare.html" style="color: white; font-size: 16px; text-align: center; display:block; margin-top: 20px;">Back to Home</a>
+
+  <footer style="text-align: center; padding: 20px; color: black; font-size: 14px; margin-top: 50px;">
+    <p>Copyright © <span id="year"></span> SheCare_ All rights reserved.</p>
+  </footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD7-8wsiRZdO21N-Q1Ownlyt54hlSVX-ao",
+  authDomain: "javascript-f6b0d.firebaseapp.com",
+  projectId: "javascript-f6b0d",
+  storageBucket: "javascript-f6b0d.firebasestorage.app",
+  messagingSenderId: "986424458897",
+  appId: "1:986424458897:web:2c9a68fbf424bff4020930"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+document.getElementById('year').textContent = new Date().getFullYear();
+
+async function loadNannies(){
+  const listDiv = document.getElementById('nannyList');
+  const loadingDiv = document.getElementById('loading');
+  
+  try {
+    const q = query(collection(db, "registrations"));
+    const querySnapshot = await getDocs(q);
+    
+    loadingDiv.style.display = 'none';
+    
+    if(querySnapshot.empty){
+      listDiv.innerHTML = "<p style='color:white; text-align:center;'>No registrations yet.</p>";
+      return;
+    }
+
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      listDiv.innerHTML += `
+        <div class="nanny-card">
+          <h3>${data.fullNames}</h3>
+          <p><strong>SA ID:</strong> ${data.saId}</p>
+          <p><strong>Email:</strong> ${data.email}</p>
+          <p><strong>City:</strong> ${data.city}</p>
+          <p><strong>Study:</strong> ${data.studyType}</p>
+          <p><strong>Address:</strong> ${data.address}</p>
+          <p><strong>Citizen:</strong> ${data.saCitizen} | <strong>Disability:</strong> ${data.disability}</p>
+        </div>
+      `;
+    });
+
+  } catch(err){
+    loadingDiv.innerHTML = "Error loading: " + err.message;
+  }
+}
+
+loadNannies();
+</script>
+
+</body>
+</html>
