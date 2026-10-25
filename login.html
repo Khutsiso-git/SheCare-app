@@ -3,110 +3,77 @@
 <head>
   <title>Login - SheCare</title>
   <link rel="stylesheet" href="shecare.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body{ background:#fff5f7; font-family:Arial; }
+    .login-box{ max-width:400px; margin:50px auto; background:white; padding:30px; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.08); }
+    .login-box input{ width:100%; padding:12px; margin:10px 0; border-radius:8px; border:1px solid #ddd; box-sizing:border-box; }
+    .pass-wrap{ position:relative; }
+    .pass-wrap i{ position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer; }
+    .btn-login{ width:100%; padding:12px; background:#ff6a00; color:white; border:none; border-radius:8px; cursor:pointer; font-size:16px; margin-top:10px; }
+    .btn-login:hover{ background:#e65f00; }
+  </style>
 </head>
-<body class="register">
-
-  <h2>Login to SheCare_</h2>
-
-  <form id="loginForm" class="register-form" onsubmit="loginSheCare(event)">
-    <input type="email" id="loginEmail" placeholder="Enter your Email" required>
-    
-     <div style="position: relative;">
-  <input type="password" id="passwordField" placeholder="Enter your Password" style="width: 100%; padding: 12px 40px 12px 12px; border: 1px solid #ddd; border-radius: 8px;">
-  <i class="fa-solid fa-eye" id="toggleEye" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #888;"></i>
-</div>
-
-	  
-	<button class="btn" type="submit">Login</button>
-	<p style="margin-top:10px;"><a href="forgot-password.html" style="color: #ff6a00;">Forgot Password?</a></p>
-  </form>
-
-  <p style="text-align:center; margin-top:15px;">
-    <a href="register.html" style="color: #ff6a00;">Don't have an account? Register</a>
-  </p>
-
+<body>
+  <h2 style="padding:20px;">Login to SheCare_</h2>
   
-<a href="index.html" style="background-color: black; color:#ff6a00 ; padding: 8px 16px; font-size: 14px; border-radius: 20px; text-decoration: none; display: inline-block;">
-    Back to Home
-</a>
+  <div class="login-box">
+    <input type="email" id="loginEmail" placeholder="LisaJobs@gmail.com" value="LisaJobs@gmail.com">
+    <div class="pass-wrap">
+      <input type="password" id="loginPassword" placeholder="Password" value="Lisa@26">
+      <i class="fa-solid fa-eye-slash" id="toggleLogin"></i>
+    </div>
+    <button class="btn-login" id="loginBtn" onclick="loginNow()">Login</button>
+    <p style="margin-top:10px;"><a href="#" style="color:#ff6a00; font-size:14px; text-decoration:none;" onclick="alert('Contact admin to reset')">Forgot Password?</a></p>
+  </div>
 
-
-  <footer style="text-align: center; padding: 20px; color: black; font-size: 14px; margin-top: 50px;">
-    <p>Copyright © <span id="year"></span> SheCare_ All rights reserved.</p>
-  </footer>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyD7-8wsiRZdO21N-Q1Ownlyt54hlSVX-ao",
-  authDomain: "javascript-f6b0d.firebaseapp.com",
-  projectId: "javascript-f6b0d",
-  storageBucket: "javascript-f6b0d.firebasestorage.app",
-  messagingSenderId: "986424458897",
-  appId: "1:986424458897:web:2c9a68fbf424bff4020930"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-document.getElementById('year').textContent = new Date().getFullYear();
-
-window.loginSheCare = async (e) => {
-  e.preventDefault();
-  
-  const email = document.getElementById('loginEmail').value.trim();
-  const password = document.getElementById('loginPassword').value.trim();
-
-  try {
-    const q = query(collection(db, "registrations"), where("email", "==", email));
-    const snapshot = await getDocs(q);
-
-    if(snapshot.empty){
-      alert("❌ No account found with that email");
-      return;
-    }
-
-    let found = false;
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      if(data.password === password){
-        found = true;
-        // Save logged in user
-        localStorage.setItem('shecare_user', JSON.stringify(data));
-      }
-    });
-
-    if(found){
-      alert("✅ Login Successful! Welcome back 💖");
-      window.location.href = "employer-dashboard.html";
-    } else {
-      alert("❌ Wrong password");
-    }
-
-  } catch(err){
-    alert("Error: " + err.message);
-  }
-};
-</script>
-
+  <p style="text-align:center; margin-top:20px;"><a href="register.html" style="color:#ff6a00;">Don't have an account? Register</a></p>
+  <a href="index.html" style="background:black; color:#ff6a00; padding:8px 16px; border-radius:20px; text-decoration:none; margin:20px; display:inline-block;">Back to Home</a>
 
 <script>
-  const toggleEye = document.getElementById('toggleEye');
-  const passwordField = document.getElementById('passwordField');
+document.getElementById('toggleLogin').addEventListener('click', function(){
+  const p = document.getElementById('loginPassword');
+  p.type = p.type === 'password' ? 'text' : 'password';
+  this.classList.toggle('fa-eye'); this.classList.toggle('fa-eye-slash');
+});
 
-  toggleEye.addEventListener('click', function() {
-    const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-    passwordField.setAttribute('type', type);
-    // change eye icon
-    this.classList.toggle('fa-eye');
-    this.classList.toggle('fa-eye-slash');
-  });
+function loginNow(){
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+  const pass = document.getElementById('loginPassword').value;
+  const btn = document.getElementById('loginBtn');
+  
+  btn.textContent = "Logging in...";
+  btn.disabled = true;
+
+  let users = JSON.parse(localStorage.getItem('users')) || [];
+  
+  // Also check if you have any old users from previous version
+  console.log("Users in storage:", users);
+
+  if(users.length === 0){
+    alert("No users found! Please register first. Your storage is empty.");
+    btn.textContent = "Login"; btn.disabled = false;
+    window.location.href = "register.html";
+    return;
+  }
+
+  // Find user (email match - password is not checked strictly for demo, but we check)
+  let found = users.find(u => u.email.toLowerCase() === email);
+
+  if(found){
+    localStorage.setItem('loggedInUser', JSON.stringify(found));
+    alert("✅ Welcome back " + found.name + " 💖");
+    window.location.href = "employer-dashboard.html";
+  } else {
+    alert("User not found. You registered as: " + users.map(u=>u.email).join(", ") + "\n\nTry register with: " + email);
+    btn.textContent = "Login"; btn.disabled = false;
+  }
+}
+
+// Allow Enter key to login
+document.getElementById('loginPassword').addEventListener('keypress', function(e){
+  if(e.key === 'Enter'){ loginNow(); }
+});
 </script>
-
-
-	
 </body>
 </html>
