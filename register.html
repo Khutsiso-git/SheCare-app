@@ -74,7 +74,7 @@ window.registerSheCare = async (e) => {
   try {
     await addDoc(collection(db, "registrations"), data);
     alert("✅ Registration Successful! Welcome to SheCare 💖");
-    window.location.href = "Login.html";
+    window.location.href = "login.html";
   } catch(err){
     alert("Error: " + err.message);
   }
