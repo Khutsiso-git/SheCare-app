@@ -3,6 +3,12 @@
 <head>
   <title>Register - SheCare</title>
   <link rel="stylesheet" href="shecare.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    .pass-wrapper{ position:relative; }
+    .pass-wrapper i{ position:absolute; right:15px; top:50%; transform:translateY(-50%); cursor:pointer; color:#888; }
+    .register-form input{ width:100%; padding:12px; margin:8px 0; border-radius:8px; border:1px solid #ddd; box-sizing: border-box; }
+  </style>
 </head>
 <body class="register">
 
@@ -13,22 +19,30 @@
     <input type="text" id="saId" placeholder="Enter your South African ID (13 digits)" maxlength="13" required>
     <input type="text" id="fullNames" placeholder="Enter your Full Names as shown on ID" required>
     <input type="email" id="email" placeholder="Please enter your Email" required>
-    <input type="password" id="password" placeholder="Please enter your Password" required>
-    <input type="password" id="rePassword" placeholder="Re-type your Password" required>
+    
+    <div class="pass-wrapper">
+      <input type="password" id="password" placeholder="Please enter your Password" required>
+      <i class="fa-solid fa-eye" id="togglePass1"></i>
+    </div>
+    <div class="pass-wrapper">
+      <input type="password" id="rePassword" placeholder="Re-type your Password" required>
+      <i class="fa-solid fa-eye" id="togglePass2"></i>
+    </div>
+
     <input type="text" id="address" placeholder="Enter your home address" required>
     <input type="text" id="studyType" placeholder="Full-time or Part-time?" required>
     <input type="text" id="disability" placeholder="Living with any disability? Yes/No" required>
     <input type="text" id="city" placeholder="What is your preferred city?" required>
+    
+    <label style="font-size:13px;">Upload Photo (for dashboard):</label>
+    <input type="file" id="photoUpload" accept="image/*">
+
     <button class="btn" type="submit">Register</button>
   </form>
 
-  
 <a href="index.html" style="background-color: black; color:#ff6a00 ; padding: 8px 16px; font-size: 14px; border-radius: 20px; text-decoration: none; display: inline-block;">
     Back to Home
 </a>
-
-
-
   
   <footer style="text-align: center; padding: 20px; color: black; font-size: 14px; margin-top: 50px;">
     <p>Copyright © <span id="year"></span> SheCare_ All rights reserved.</p>
@@ -50,8 +64,27 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Year for footer
 document.getElementById('year').textContent = new Date().getFullYear();
+
+// Eye icons
+document.getElementById('togglePass1').addEventListener('click', function(){
+  const p = document.getElementById('password');
+  p.type = p.type === 'password' ? 'text' : 'password';
+  this.classList.toggle('fa-eye'); this.classList.toggle('fa-eye-slash');
+});
+document.getElementById('togglePass2').addEventListener('click', function(){
+  const p = document.getElementById('rePassword');
+  p.type = p.type === 'password' ? 'text' : 'password';
+  this.classList.toggle('fa-eye'); this.classList.toggle('fa-eye-slash');
+});
+
+// Photo to base64
+let photoBase64 = "";
+document.getElementById('photoUpload').addEventListener('change', function(e){
+  const reader = new FileReader();
+  reader.onload = function(event){ photoBase64 = event.target.result; }
+  reader.readAsDataURL(e.target.files[0]);
+});
 
 window.registerSheCare = async (e) => {
   e.preventDefault();
@@ -71,12 +104,28 @@ window.registerSheCare = async (e) => {
   if(data.saId.length !== 13){ alert("SA ID must be 13 digits"); return; }
   if(document.getElementById('rePassword').value !== data.password){ alert("Passwords don't match"); return; }
 
+  // 1. Save to localStorage for Dashboard (THIS FIXES YOUR PROBLEM)
+  let users = JSON.parse(localStorage.getItem('users')) || [];
+  users.push({
+    name: data.fullNames,
+    saId: data.saId,
+    email: data.email,
+    city: data.city,
+    workType: data.studyType,
+    address: data.address,
+    citizen: data.saCitizen,
+    disability: data.disability,
+    photo: photoBase64
+  });
+  localStorage.setItem('users', JSON.stringify(users));
+
   try {
     await addDoc(collection(db, "registrations"), data);
     alert("✅ Registration Successful! Welcome to SheCare 💖");
-    window.location.href = "login.html";
+    window.location.href = "dashboard.html"; // Go straight to dashboard to see it
   } catch(err){
-    alert("Error: " + err.message);
+    alert("Saved locally but Firebase Error: " + err.message + " - Going to dashboard anyway");
+    window.location.href = "dashboard.html";
   }
 };
 </script>
