@@ -119,16 +119,28 @@ window.registerSheCare = async (e) => {
   });
   localStorage.setItem('users', JSON.stringify(users));
 
-  try {
+
+try {
     await addDoc(collection(db, "registrations"), data);
     alert("✅ Registration Successful! Welcome to SheCare 💖");
-    window.location.href = "dashboard.html"; // Go straight to dashboard to see it
+    window.location.href = "employer-dashboard.html"; // <-- FIXED NAME
   } catch(err){
     alert("Saved locally but Firebase Error: " + err.message + " - Going to dashboard anyway");
-  
- window.location.href = "employer-dashboard.html";
+    window.location.href = "employer-dashboard.html"; // <-- FIXED NAME
   }
-};
+
+
+
+
+
+
+
+
+
+
+
+
+  
 </script>
 
 </body>
