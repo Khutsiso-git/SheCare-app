@@ -460,28 +460,6 @@ a[href*="index.html"]:hover {
   font-size: 22px;
 }
 
-.mobile-menu {
-  display: none;
-  flex-direction: column;
-  background: white;
-  position: fixed;
-  top: 60px;
-  left: 0;
-  width: 70%;
-  height: 100vh;
-  z-index: 1000;
-}
-.mobile-menu.active {
-  display: flex !important;
-}
-
-@media (min-width: 769px) {
-  .hamburger { display: none; }
-}
-@media (max-width: 768px) {
-  .hamburger { display: block; cursor: pointer; font-size: 28px; }
-}
-
 
 
 
