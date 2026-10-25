@@ -221,7 +221,7 @@ hero-content {
   border-radius: 15px;
 }
 /* Makes Back to Home visible */
-a[href*="shecare.html"] {
+a[href*="index.html"] {
   color: #ff6600 !important; /* orange so you can see it */
   background-color: black;
   padding: 8px 15px;
@@ -234,7 +234,7 @@ a[href*="shecare.html"] {
   margin: 20px;
 }
 
-a[href*="shecare.html"]:hover {
+a[href*="index.html"]:hover {
   background-color: #ff6600;
   color: white !important;
 }
