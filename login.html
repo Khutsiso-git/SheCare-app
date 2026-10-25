@@ -3,6 +3,7 @@
 <head>
   <title>Login - SheCare</title>
   <link rel="stylesheet" href="shecare.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="register">
 
@@ -10,7 +11,13 @@
 
   <form id="loginForm" class="register-form" onsubmit="loginSheCare(event)">
     <input type="email" id="loginEmail" placeholder="Enter your Email" required>
-    <input type="password" id="loginPassword" placeholder="Enter your Password" required>
+    
+     <div style="position: relative;">
+  <input type="password" id="passwordField" placeholder="Enter your Password" style="width: 100%; padding: 12px 40px 12px 12px; border: 1px solid #ddd; border-radius: 8px;">
+  <i class="fa-solid fa-eye" id="toggleEye" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #888;"></i>
+</div>
+
+	  
 	<button class="btn" type="submit">Login</button>
 	<p style="margin-top:10px;"><a href="forgot-password.html" style="color: #ff6a00;">Forgot Password?</a></p>
   </form>
@@ -85,5 +92,21 @@ window.loginSheCare = async (e) => {
 };
 </script>
 
+
+<script>
+  const toggleEye = document.getElementById('toggleEye');
+  const passwordField = document.getElementById('passwordField');
+
+  toggleEye.addEventListener('click', function() {
+    const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordField.setAttribute('type', type);
+    // change eye icon
+    this.classList.toggle('fa-eye');
+    this.classList.toggle('fa-eye-slash');
+  });
+</script>
+
+
+	
 </body>
 </html>
