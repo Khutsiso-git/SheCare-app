@@ -460,7 +460,48 @@ a[href*="index.html"]:hover {
   font-size: 22px;
 }
 
+/* NEW CARD STYLE - Black, Dark Orange, White */
+.user-card {
+  background: #ffffff;
+  border: 2px solid #000;
+  border-left: 6px solid #E65100; /* dark orange */
+  border-radius: 12px;
+  padding: 20px;
+  margin: 15px auto;
+  max-width: 800px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  color: #000;
+}
+.user-card h3 {
+  color: #000;
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+.user-card p {
+  margin: 4px 0;
+  font-size: 14px;
+}
+.user-card span.label {
+  color: #E65100; /* dark orange */
+  font-weight: bold;
+}
+.user-card span.value {
+  color: #000;
+}
 
+.back-btn {
+  background: #000;
+  color: #E65100;
+  border: 2px solid #000;
+  padding: 10px 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.back-btn:hover {
+  background: #E65100;
+  color: #fff;
+}
 
 
 
