@@ -47,6 +47,26 @@
   </footer>
 
 <script type="module">
+// Get users from storage
+let users = JSON.parse(localStorage.getItem('users')) || [];
+
+// MIGRATE old data: if user has Study but no Work-type, copy it
+users = users.map(user => {
+  if (!user.workType && !user['Work-type']) {
+    // copy from old field
+    user.workType = user.study || user.Study || 'full time';
+  }
+  return user;
+});
+
+// Save back the fixed data
+localStorage.setItem('users', JSON.stringify(users));
+
+Work-type: ${user.workType}
+
+
+
+  
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
