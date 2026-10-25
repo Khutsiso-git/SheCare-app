@@ -21,8 +21,8 @@
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   }
   .avatar {
-    width: 60px;
-    height: 60px;
+    width: 65px;
+    height: 65px;
     background: #000;
     color: #E65100;
     border-radius: 50%;
@@ -32,6 +32,12 @@
     font-weight: bold;
     font-size: 20px;
     flex-shrink: 0;
+    overflow: hidden;
+  }
+  .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
   .info { flex: 1; }
   .info h3 { margin: 0 0 8px 0; color: #000; }
@@ -49,6 +55,7 @@
     cursor: pointer;
   }
   .back-btn:hover { background: #E65100; }
+  .empty-msg { text-align:center; margin-top:50px; color:#666; }
 </style>
 </head>
 <body>
@@ -58,37 +65,60 @@
 <div id="dashboard"></div>
 
 <button class="back-btn" onclick="window.location.href='index.html'">← Back to Home</button>
+<button class="back-btn" onclick="clearData()" style="background:#888;">Clear Test Data</button>
 
 <script>
 // Get users
 let users = JSON.parse(localStorage.getItem('users')) || [];
 
-// FIX: Migrate old Study to Work-type so no undefined
+// FIX: Migrate old data so no "undefined"
 users = users.map(u => {
-  if (!u.workType && !u['Work-type']) {
-    u.workType = u.study || u.Study || 'full time';
+  if (!u.workType) {
+    u.workType = u.study || u.Study || u['Work-type'] || 'full time';
+  }
+  if (!u.saId) {
+    u.saId = u.saID || 'N/A';
   }
   return u;
 });
-localStorage.setItem('users', JSON.stringify(users));
 
-// Show cards WITH pictures
-document.getElementById('dashboard').innerHTML = users.map(user => {
-  let initials = (user.name || 'TU').substring(0,2).toUpperCase();
-  return `
-  <div class="user-card">
-    <div class="avatar">${initials}</div>
-    <div class="info">
-      <h3>${user.name || 'test user'}</h3>
-      <p><span class="label">SA ID:</span> ${user.saId || user.saID || 'N/A'}</p>
-      <p><span class="label">Email:</span> ${user.email}</p>
-      <p><span class="label">City:</span> ${user.city} | <span class="label">Work-type:</span> ${user.workType}</p>
-      <p><span class="label">Address:</span> ${user.address || 'N/A'}</p>
-      <p><span class="label">Citizen:</span> ${user.citizen || 'N/A'} | <span class="label">Disability:</span> ${user.disability || 'N/A'}</p>
+const dashboardDiv = document.getElementById('dashboard');
+
+if (users.length === 0) {
+  dashboardDiv.innerHTML = `<div class="empty-msg"><h3>No caregivers yet</h3><p>Go to Register and add 1 user to test.</p></div>`;
+} else {
+  // Show newest first
+  dashboardDiv.innerHTML = users.reverse().map(user => {
+    let initials = (user.name || 'TU').substring(0,2).toUpperCase();
+    
+    // Photo logic - if user has photo, show it
+    let avatarContent = initials;
+    if (user.photo) {
+      avatarContent = `<img src="${user.photo}" alt="photo">`;
+    }
+
+    return `
+    <div class="user-card">
+      <div class="avatar">${avatarContent}</div>
+      <div class="info">
+        <h3>${user.name || 'test user'}</h3>
+        <p><span class="label">SA ID:</span> ${user.saId || 'N/A'}</p>
+        <p><span class="label">Email:</span> ${user.email}</p>
+        <p><span class="label">City:</span> ${user.city || 'N/A'} | <span class="label">Work-type:</span> ${user.workType}</p>
+        <p><span class="label">Address:</span> ${user.address || 'N/A'}</p>
+        <p><span class="label">Citizen:</span> ${user.citizen || 'N/A'} | <span class="label">Disability:</span> ${user.disability || 'N/A'}</p>
+      </div>
     </div>
-  </div>
-  `;
-}).join('');
+    `;
+  }).join('');
+}
+
+function clearData(){
+  if(confirm('Delete all test users?')){
+    localStorage.removeItem('users');
+    location.reload();
+  }
+}
 </script>
 
 </body>
