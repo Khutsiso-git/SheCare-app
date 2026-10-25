@@ -133,6 +133,40 @@ try {
 
 
 
+  
+</script>
+
+<script>
+  const toggle1 = document.getElementById('togglePass1');
+  const toggle2 = document.getElementById('togglePass2');
+  const pass1 = document.getElementById('password');
+  const pass2 = document.getElementById('rePassword');
+
+  toggle1.addEventListener('click', function(){
+    if(pass1.type === 'password'){
+      pass1.type = 'text';
+      toggle1.classList.remove('fa-eye');
+      toggle1.classList.add('fa-eye-slash');
+    } else {
+      pass1.type = 'password';
+      toggle1.classList.remove('fa-eye-slash');
+      toggle1.classList.add('fa-eye');
+    }
+  });
+
+  toggle2.addEventListener('click', function(){
+    if(pass2.type === 'password'){
+      pass2.type = 'text';
+      toggle2.classList.remove('fa-eye');
+      toggle2.classList.add('fa-eye-slash');
+    } else {
+      pass2.type = 'password';
+      toggle2.classList.remove('fa-eye-slash');
+      toggle2.classList.add('fa-eye');
+    }
+  });
+</script>
+
 
 
 
@@ -141,7 +175,5 @@ try {
 
 
   
-</script>
-
 </body>
 </html>
