@@ -125,7 +125,8 @@ window.registerSheCare = async (e) => {
     window.location.href = "dashboard.html"; // Go straight to dashboard to see it
   } catch(err){
     alert("Saved locally but Firebase Error: " + err.message + " - Going to dashboard anyway");
-    window.location.href = "dashboard.html";
+  
+ window.location.href = "employer-dashboard.html";
   }
 };
 </script>
