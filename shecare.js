@@ -109,7 +109,7 @@ async function loadApplicants(){
           <td>${d.saId || ''}</td>
           <td>${d.saCitizen || ''}</td>
           <td>${d.city || ''}</td>
-          <td>${d.studyType || ''}</td>
+          <td>${d.workType || ''}</td>
           <td>${d.disability || ''}</td>
           <td>${d.address || ''}</td>
         </tr>
